@@ -1,28 +1,19 @@
 const navLinks = Array.from(document.querySelectorAll('.nav-link'));
 const sections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
 
-const setActiveLink = (id) => {
-  navLinks.forEach(link => {
-    link.classList.toggle('active', link.getAttribute('href').slice(1) === id);
-  });
-};
-
-// Update active nav link on scroll with deliberate selection
+// Update active nav link on scroll
 const observer = new IntersectionObserver((entries) => {
-  const visibleEntries = entries.filter(entry => entry.isIntersecting);
-
-  visibleEntries.forEach(entry => {
-    entry.target.classList.add('visible');
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.getAttribute('id');
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href').slice(1) === id);
+      });
+      entry.target.classList.add('visible');
+    }
   });
-
-  if (visibleEntries.length) {
-    const topEntry = visibleEntries.sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    const id = topEntry.target.getAttribute('id');
-    setActiveLink(id);
-  }
 }, {
-  threshold: [0.35, 0.55, 0.75],
-  rootMargin: '-12% 0px -20% 0px'
+  threshold: 0.35
 });
 
 sections.forEach(section => {
